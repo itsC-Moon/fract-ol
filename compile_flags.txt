@@ -1,0 +1,5 @@
+-Iinclude
+-IMLX42/include
+-Wall 
+-Wextra
+-Werror
