@@ -6,49 +6,46 @@
 /*   By: hibenouk <hibenouk@1337.ma>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 14:50:37 by hibenouk          #+#    #+#             */
-/*   Updated: 2024/02/21 19:12:20 by hibenouk         ###   ########.fr       */
+/*   Updated: 2024/02/29 21:45:10 by hibenouk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
-static int itration(t_Vec2 c, mlx_t *mlx, t_Vec2 z, t_range range)
+#include <math.h>
+static int	itration(t_param *param, t_Vec2 z)
 {
-	int i;
+	int		i;
 
-	z = converte((t_range){mlx->width, mlx->height}, range, z);
+	z = converte(param, z);
 	i = 0;
-	while (i < MAX_ITERS)
+	while (i < param->max_itr)
 	{
 		z = sqrt_complex(z);
-		z = add_vec2(z, c);
+		z = add_vec2(z, param->julia);
 		if (z.a * z.a + z.b * z.b >= 4.0)
 			return i;
 		i++;
 	}
-	return (MAX_ITERS);
+	return (param->max_itr);
 }
-void draw_julia(t_param *param, t_range range, t_Vec2 c)
+
+void	draw_julia(t_param *param)
 {
-	uint32_t x;
-	uint32_t y;
-	int it;
+	int32_t	x;
+	int32_t	y;
+	int			it;
 	
-	if (!param->img)
-		param->img = mlx_new_image(param->mlx, param->mlx->width, param->mlx->width);
 	x = 0;
-	while (x < param->img->width)
+	while (x < param->width)
 	{
 		y = 0;
-		while (y < param->img->height)
+		while (y < param->height)
 		{
-			it  = itration(c, param->mlx, (t_Vec2){.a = x, .b = y}, range);
-			if (it == MAX_ITERS)
+			it  = itration(param, (t_Vec2){.a = x, .b = y});
+			if (it == param->max_itr)
 				it = 0x000000FF;
 			else
-				it = 0xFF00FF00 | it;
-			//  hue = int(255 * m / MAX_ITER)
-			// saturation = 255
-			// value = 255 if m < MAX_ITER else 0			it = 0x000000FF;
+				it = (0xA2FF8600 | it % 256 );
 			mlx_put_pixel(param->img, x, y, it);
 			y++;
 		}

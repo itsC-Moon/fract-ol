@@ -6,7 +6,7 @@
 /*   By: hibenouk <hibenouk@1337.ma>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 21:33:58 by hibenouk          #+#    #+#             */
-/*   Updated: 2024/02/22 11:35:45 by hibenouk         ###   ########.fr       */
+/*   Updated: 2024/02/29 21:34:01 by hibenouk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,16 @@
 #include <stdint.h>
 #include <stdio.h>
 
-int itration(t_Vec2 c, mlx_t *mlx, t_range range)
+
+int itration(t_Vec2 c, t_param *param)
 {
 	int i;
 	t_Vec2 z;
 
 	z = (t_Vec2){0};
-	c = converte((t_range){mlx->width, mlx->height}, range, c);
+	c = converte(param, c);
 	i = 0;
-	while (i < MAX_ITERS)
+	while (i < param->max_itr)
 	{
 		z = sqrt_complex(z);
 		z = add_vec2(z, c);
@@ -32,28 +33,23 @@ int itration(t_Vec2 c, mlx_t *mlx, t_range range)
 			return i;
 		i++;
 	}
-	return (MAX_ITERS);
+	return (param->max_itr);
 }
 
-void	draw_mandelbrot(t_param *param, t_range range, t_range mov)
+void	draw_mandelbrot(t_param *param)
 {
-	uint32_t x;
-	uint32_t y;
+	int32_t x;
+	int32_t y;
 	int it;
 	
-	if (!param->img)
-		param->img = mlx_new_image(param->mlx, param->mlx->width, param->mlx->width);
 	x = 0;
-	while (x < param->img->width)
+	while (x < param->width)
 	{
 		y = 0;
-		while (y < param->img->height)
+		while (y < param->height)
 		{
-			it  = itration((t_Vec2){.a = x + mov.min, .b = y + mov.max}, param->mlx, range);
-			if (it == MAX_ITERS)
-				it = 0x000000FF;
-			else
-				it = 0xFFAEFF00 | it;
+			it  = itration((t_Vec2){.a = x, .b = y}, param);
+			it = (it == param->max_itr) * 0x000000FF + (it != param->max_itr) * (0xFFAEFF00 | it);
 			mlx_put_pixel(param->img, x, y, it);
 			y++;
 		}

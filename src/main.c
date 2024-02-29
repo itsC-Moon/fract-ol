@@ -6,87 +6,91 @@
 /*   By: hibenouk <hibenouk@1337.ma>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 17:17:32 by hibenouk          #+#    #+#             */
-/*   Updated: 2024/02/22 12:15:42 by hibenouk         ###   ########.fr       */
+/*   Updated: 2024/02/29 21:37:58 by hibenouk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "MLX42/MLX42.h"
 #include "fractol.h"
 #include <stdio.h>
-static void ft_error(void)
+#include <stdlib.h>
+#include <unistd.h>
+
+void render(t_param *param)
 {
-	fprintf(stderr, "%s", mlx_strerror(mlx_errno));
-	exit(EXIT_FAILURE);
+	if (ft_strcmp(param->name, "Julia") == 0)
+		draw_julia(param);
+	else if (ft_strcmp(param->name, "Mandelbrot") == 0)
+		draw_mandelbrot(param);
 }
 
-void my_keyhook(mlx_key_data_t keydata, void* param)
+void usage()
 {
-	static t_range range = {.min = -2, .max = +2};
-	static t_range mov = {.min = 0, .max = 0};
-	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == MLX_PRESS)
+	ft_putstr_fd("usage : \n", 2);
+	ft_putstr_fd("./fractol Julia x y\n", 2);
+	ft_putstr_fd("./fractol Mandelbrot\n", 2);
+	exit(1);
+}
+void parse(t_param *param, char **argv, int ac)
+{
+
+	param->name = *(argv + 1);
+	if (ft_strcmp(param->name, "Julia") == 0)
 	{
-		mlx_close_window(((t_param*)param)->mlx);
-		exit(0);
+		if (ac != 4)
+			return (ft_putstr_fd("usage : ./fractol Julia x y\n", 2), exit(1));
+		param->julia.a = ft_atof(*(argv + 2));
+		param->julia.b = ft_atof(*(argv + 3));
 	}
-	if (keydata.key == MLX_KEY_K && keydata.action == MLX_PRESS)
+	else if (ft_strcmp(param->name, "Mandelbrot") == 0)
 	{
-		range.max += .15;
-		range.min -= .15;
-		printf("a = %lf, b = %lf\n",range.max, range.min);
-		// draw_julia(param, range, (t_Vec2){.a =-0.835, .b= -0.2321});
-		draw_mandelbrot((t_param*)param, range, mov);	
+		if (ac != 2)
+			return (ft_putstr_fd("usage : ./fractol Mandelbrot\n", 2), exit(1));
 	}
-	else if (keydata.key == MLX_KEY_J && keydata.action == MLX_PRESS)
-	{
-		range.max -= .15;
-		range.min += .15;
-		printf("a = %lf, b = %lf\n",range.max, range.min);
-		// draw_julia(param, range, (t_Vec2){.a =-0.835, .b= -0.2321});
-		draw_mandelbrot((t_param*)param, range,mov);	
-	}
-	if (keydata.key == MLX_KEY_RIGHT && keydata.action == MLX_PRESS)
-	{
-		// mov.max -= 50;
-		mov.min -= 50;
-		printf("a = %lf, b = %lf\n",mov.max, mov.min);
-		draw_mandelbrot((t_param*)param, range,mov);	
-	}
-	else if (keydata.key == MLX_KEY_LEFT && keydata.action == MLX_PRESS)
-	{
-		// mov.max -= 50;
-		mov.min += 50;
-		printf("a = %lf, b = %lf\n",mov.max, mov.min);
-		draw_mandelbrot((t_param*)param, range, mov);	
-	}
-	else if (keydata.key == MLX_KEY_DOWN && keydata.action == MLX_PRESS)
-	{
-		mov.max -= 50;
-		// mov.min -= 50;
-		printf("a = %lf, b = %lf\n",mov.max, mov.min);
-		draw_mandelbrot((t_param*)param, range, mov);	
-	}
-	else if (keydata.key == MLX_KEY_UP && keydata.action == MLX_PRESS)
-	{
-		mov.max += 50;
-		// mov.min += 50;
-		printf("a = %lf, b = %lf\n",mov.max, mov.min);
-		draw_mandelbrot((t_param*)param, range,mov);	
-	}
+	else
+		usage();
 }
 
-int32_t main(void)
+t_param init_param(int ac, char **argv)
+{
+	// TODO : handel empty param
+	t_param param;
+
+	parse(&param, argv, ac);
+	param.img = NULL;
+	param.mlx = mlx_init(1600, 900, "fractol", true);
+	param.width = 1600;
+	param.height = 900;
+	if (!param.mlx)
+		ft_error(mlx_strerror(mlx_errno));
+	param.img = mlx_new_image(param.mlx, param.mlx->width, param.mlx->width);
+	if (!param.img)
+		ft_error(mlx_strerror(mlx_errno));
+	param.shift_x = 0;
+	param.shift_y = 0;
+	param.zoom = 1;
+	param.max_itr = 100;
+	return (param);
+}
+
+void leak()
+{
+	system("leaks fractol");
+}
+int main(int ac, char **argv)
 {
 	t_param param;
 
-	param.img = NULL;
-	param.mlx = mlx_init(600, 600, "fractol", true);
-	if (!param.mlx)
-		ft_error();
-	draw_mandelbrot(&param, (t_range){.min = -2, .max = 2},(t_range){.min = 0, .max = 0});	
-	// draw_julia(&param, (t_range){.min = -0.01, .max = 0.02}, (t_Vec2){.a =-0.835, .b= -0.2321});
-	mlx_key_hook(param.mlx, my_keyhook, &param);
+	if (ac < 2)
+		usage();
+	param = init_param(ac, argv);
 	mlx_image_to_window(param.mlx, param.img, 0, 0);
+	render(&param);
+	mlx_key_hook(param.mlx, my_keyhook, &param);
+	mlx_scroll_hook(param.mlx, my_scrollhook, &param);;
+	mlx_resize_hook(param.mlx, resize_func, &param);
 	mlx_loop(param.mlx);
 	mlx_terminate(param.mlx);
+	mlx_delete_image(param.mlx, param.img);
 	return (EXIT_SUCCESS);
 }

@@ -6,22 +6,46 @@
 /*   By: hibenouk <hibenouk@1337.ma>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 19:30:06 by hibenouk          #+#    #+#             */
-/*   Updated: 2024/02/21 13:53:23 by hibenouk         ###   ########.fr       */
+/*   Updated: 2024/02/29 21:40:16 by hibenouk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
-// new_value = ( (old_value - old_min) / (old_max - old_min) ) * (new_max - new_min) + new_min
-	// c.a = ((c.a - 0) /old->width - 0 ) * (2 - -2) + -2;
-	// c.b = ((c.b - 0) /old->height - 0 ) * (2 - -2) + -2;
-t_Vec2 converte(t_range old, t_range new, t_Vec2 c)
+#include <assert.h>
+#include <stdint.h>
+
+int	ft_strcmp(const char *s1, const char *s2)
 {
-	c.a = ((c.a - 0) /old.min - 0 ) * (new.max - new.min) + new.min;
-	c.b = ((c.b - 0) /old.max - 0 ) * (new.max - new.min) + new.min;
+	while (*s1 || *s2)
+	{
+		if (*s1 != *s2)
+			return (*s1 - *s2);
+		s1++;
+		s2++;
+	}
+	return (0);
+}
+
+void	ft_putstr_fd(const char *s, int fd)
+{
+	int		i;
+
+	i = 0;
+	while (s[i] != '\0')
+		i++;
+	write(fd, s, i);
+}
+
+t_Vec2	converte(t_param *param, t_Vec2 c)
+{
+	c.a = (c.a / param->width) * 4 - 2;
+	c.b = (c.b / param->height) * 4 - 2;
+	c.a = c.a * param->zoom + param->shift_x;
+	c.b = c.b * param->zoom + param->shift_y;
 	return (c);
 }
 
-t_Vec2 sqrt_complex(t_Vec2 z)
+t_Vec2	sqrt_complex(t_Vec2 z)
 {
 	t_Vec2	s;
 
@@ -30,7 +54,7 @@ t_Vec2 sqrt_complex(t_Vec2 z)
 	return (s);
 }
 
-t_Vec2 add_vec2(t_Vec2 a, t_Vec2 b)
+t_Vec2	add_vec2(t_Vec2 a, t_Vec2 b)
 {
 	return ((t_Vec2){.a = a.a + b.a, .b = a.b + b.b});
 }
