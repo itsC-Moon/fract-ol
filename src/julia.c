@@ -6,7 +6,7 @@
 /*   By: hibenouk <hibenouk@1337.ma>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 14:50:37 by hibenouk          #+#    #+#             */
-/*   Updated: 2024/02/29 21:45:10 by hibenouk         ###   ########.fr       */
+/*   Updated: 2024/03/02 12:06:16 by hibenouk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,7 @@ void	draw_julia(t_param *param)
 		while (y < param->height)
 		{
 			it  = itration(param, (t_Vec2){.a = x, .b = y});
-			if (it == param->max_itr)
-				it = 0x000000FF;
-			else
-				it = (0xA2FF8600 | it % 256 );
-			mlx_put_pixel(param->img, x, y, it);
+			put_color(it ,x, y, param, 0xFFCB42F4);
 			y++;
 		}
 		x++;

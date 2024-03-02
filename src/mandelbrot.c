@@ -6,7 +6,7 @@
 /*   By: hibenouk <hibenouk@1337.ma>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 21:33:58 by hibenouk          #+#    #+#             */
-/*   Updated: 2024/02/29 21:34:01 by hibenouk         ###   ########.fr       */
+/*   Updated: 2024/03/02 12:06:58 by hibenouk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,7 @@ void	draw_mandelbrot(t_param *param)
 		while (y < param->height)
 		{
 			it  = itration((t_Vec2){.a = x, .b = y}, param);
-			it = (it == param->max_itr) * 0x000000FF + (it != param->max_itr) * (0xFFAEFF00 | it);
-			mlx_put_pixel(param->img, x, y, it);
+			put_color(it, x, y, param, 0x000000FF);
 			y++;
 		}
 		x++;

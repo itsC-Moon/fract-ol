@@ -6,7 +6,7 @@
 /*   By: hibenouk <hibenouk@1337.ma>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 14:54:49 by hibenouk          #+#    #+#             */
-/*   Updated: 2024/02/28 11:03:55 by hibenouk         ###   ########.fr       */
+/*   Updated: 2024/03/02 12:09:02 by hibenouk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ double ft_atof(const char *str)
 	int		sing;
 	double	res_l;
 	
+	if (!str || !*str)
+		ft_error("unvalid number\n");
 	i = 0;
 	while (str[i] && (str[i] == ' ' || str[i] == '\t'))
 		i++;
@@ -58,7 +60,7 @@ double ft_atof(const char *str)
 		i++;
 	}
 	if (str[i] && str[i] != '.')
-		exit(3);
+		ft_error("unvalid number\n");
 	if (str[i])
 		res_l += ft_atof2(str + i + 1);
 	res_l *= sing;

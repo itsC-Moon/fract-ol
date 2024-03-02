@@ -6,7 +6,7 @@
 /*   By: hibenouk <hibenouk@1337.ma>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 21:17:21 by hibenouk          #+#    #+#             */
-/*   Updated: 2024/02/29 21:32:03 by hibenouk         ###   ########.fr       */
+/*   Updated: 2024/03/02 14:07:20 by hibenouk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ typedef struct s_param
 	double		zoom;
 	int			max_itr;
 	t_Vec2		julia;
+	double		shift_color;
 	int			height;
 	int			width;
 }	t_param;
@@ -41,6 +42,7 @@ void	draw_mandelbrot(t_param *param);
 // void	draw_julia(t_param *param, t_range range, t_Vec2 c);
 void	draw_julia(t_param *param);
 void	render(t_param *param);
+void	put_color(int it, int x, int y, t_param *param, int fractol_clolor);
 /* math */
 t_Vec2  converte(t_param *param, t_Vec2 c);
 t_Vec2	add_vec2(t_Vec2 a, t_Vec2 b);

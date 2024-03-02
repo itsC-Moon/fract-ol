@@ -1,14 +1,15 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   main_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hibenouk <hibenouk@1337.ma>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/19 17:17:32 by hibenouk          #+#    #+#             */
-/*   Updated: 2024/03/02 11:11:51 by hibenouk         ###   ########.fr       */
+/*   Created: 2024/03/02 12:22:26 by hibenouk          #+#    #+#             */
+/*   Updated: 2024/03/02 14:09:09 by hibenouk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "MLX42/MLX42.h"
 #include "fractol.h"
@@ -70,6 +71,7 @@ t_param init_param(int ac, char **argv)
 	param.shift_y = 0;
 	param.zoom = 1;
 	param.max_itr = 100;
+	param.shift_color = 1.0f;
 	return (param);
 }
 
