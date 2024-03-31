@@ -6,13 +6,11 @@
 /*   By: hibenouk <hibenouk@1337.ma>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 19:30:06 by hibenouk          #+#    #+#             */
-/*   Updated: 2024/03/02 12:12:38 by hibenouk         ###   ########.fr       */
+/*   Updated: 2024/03/31 00:03:26 by hibenouk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
-#include <assert.h>
-#include <stdint.h>
 
 int	ft_strcmp(const char *s1, const char *s2)
 {
@@ -36,13 +34,16 @@ void	ft_putstr_fd(const char *s, int fd)
 	write(fd, s, i);
 }
 
-t_Vec2	converte(t_param *param, t_Vec2 c)
+/*
+ *	
+	OldRange = (OldMax - OldMin)
+	NewRange = (NewMax - NewMin) 
+	NewValue = (((OldValue - OldMin) * NewRange) / OldRange) + NewMin
+*/
+
+double map(double a, double n_max, double n_min, double o_max)
 {
-	c.a = (c.a / param->width) * 4 - 2;
-	c.b = (c.b / param->height) * 4 - 2;
-	c.a = c.a * param->zoom + param->shift_x;
-	c.b = c.b * param->zoom + param->shift_y;
-	return (c);
+	return ((a * (n_max - n_min) ) / o_max + n_min);
 }
 
 t_Vec2	sqrt_complex(t_Vec2 z)

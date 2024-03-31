@@ -1,5 +1,5 @@
+-I/Users/hibenouk/.brew/include
 -Iinclude
--IMLX42/include
 -Wall 
 -Wextra
 -Werror
